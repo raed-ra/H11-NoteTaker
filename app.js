@@ -3,7 +3,8 @@
 // Series of npm packages that we will use to give our server useful functionality
 // ==============================================================================
 
-var express = require("express");
+const express = require("express");
+const router = require("./routes/route");
 
 // ==============================================================================
 // EXPRESS CONFIGURATION
@@ -26,8 +27,9 @@ app.use(express.static("./public"));
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 // ================================================================================
 
-require("./routes/apiRoutes")(app);
-require("./routes/htmlRoutes")(app);
+// require("./routes/apiRoutes")(app);
+// require("./routes/htmlRoutes")(app);
+app.use(router);
 
 // =============================================================================
 // LISTENER
