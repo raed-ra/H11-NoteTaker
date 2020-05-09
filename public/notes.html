@@ -13,7 +13,7 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-primary">
     <a class="navbar-brand" href="/">Note Taker
     </a>
     <div class="icons">
@@ -23,13 +23,29 @@
   </nav>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-4 list-container">
+      <div class="col-3 list-container">
         <div class="card">
-          <ul class="list-group">
+          <li class='list-group-item bg-dark'>
+            <span class="headings text-light">Filter by Note Category:</span>
+          </li>
+          <ul class="list-group categories">
           </ul>
         </div>
       </div>
-      <div class="col-8">
+      <div class="col-3 list-container">
+        <div class="card">
+          <li class='list-group-item bg-dark'>
+            <span class="headings text-light">Note Title (choose to delete)</span>
+          </li>
+          <ul class="list-group titles"> 
+          </ul>
+        </div>
+      </div>
+      <div class="col-6"> 
+        <li class='list-group-item bg-dark'>
+          <span class="headings text-light">Note's Full Description(fill all fields to save!)</span>
+        </li>
+        <input class="note-category" placeholder="Note Category" maxlength="28" type="text">
         <input class="note-title" placeholder="Note Title" maxlength="28" type="text">
         <textarea class="note-textarea" placeholder="Note Text"></textarea>
       </div>
@@ -38,5 +54,4 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="/assets/js/index.js"></script>
 </body>
-
 </html>
