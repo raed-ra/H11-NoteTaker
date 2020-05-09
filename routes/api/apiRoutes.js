@@ -61,6 +61,24 @@ const router = express.Router()
     res.json(true);
   });
 
+  //--------------
+
+  router.put("/api/notes/:id/:note", function(req, res) {
+    try {
+      let notesData = []  
+       notesData = JSON.parse(fs.readFileSync(`./db/db.json`)) 
+       let edittedID = req.params.id;
+       let updatedNote = JSON.parse(req.params.note)
+       notesData.splice(edittedID,1,updatedNote)
+       fs.writeFileSync(`./db/db.json`,JSON.stringify(notesData))  
+       res.json(true); //return status code inside the header   Xxxxxxxxxxx
+      }
+      catch (err) {
+       res.json(err) //return status code inside the header   xxxxxxxxxxxxx
+      }
+   });
+ 
+  
   // ---------------------------------------------------------------------------
   // I added this below code so you could clear out the data while working with the functionality.
   router.get("/api/clear", function(req, res) {

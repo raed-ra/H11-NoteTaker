@@ -35,6 +35,14 @@ var deleteNote = function(id) {
   });
 };
 
+// A function for deleting a note from the db
+var updateNote = function(id,note) {
+  return $.ajax({
+    url: "api/notes/" + id + "/" + JSON.stringify(note) ,
+    method: "PUT"
+  });
+};
+
 // If there is an activeNote, display it, otherwise render empty inputs
 var renderActiveNote = function() {
   $saveNoteBtn.hide();
@@ -64,23 +72,29 @@ var handleNoteSave = function() {
     title: $noteTitle.val(),
     text: $noteText.val()
   }; 
-
+  $noteTitle.val("");
+  $noteText.val("");
+  $noteCategory.val("")
+  if (activeNote.id){
+    updateNote(activeNote.id,newNote).then(function() {
+    getAndRenderNotes();
+    
+  })
+ } else {
   saveNote(newNote).then(function(data) {
     getAndRenderNotes();
     renderActiveNote();
   });
+ }
 };//----------------------
 
 // Delete the clicked note
 var handleNoteDelete = function(event) {
   // prevents the click listener for the list from being called when the button inside of it is clicked
   event.stopPropagation();
-
   var note = $(this)
     .parent(".list-group-item")
     .data();
-
-
   if (activeNote.title === note.title) {
     activeNote = {};
     deleteNote(note.title).then(function() {
@@ -90,15 +104,40 @@ var handleNoteDelete = function(event) {
   }
 };
 
+var handleNoteEdit = function(event) {
+  // prevents the click listener for the list from being called when the button inside of it is clicked
+  event.stopPropagation();
+  var note = $(this)
+    .parent(".list-group-item")
+    .data();
+  if (activeNote.title === note.title) {
+    $noteTitle.attr("readonly", false);
+    $noteText.attr("readonly", false);
+    $noteCategory.attr("readonly", false);
+    $saveNoteBtn.show();
+    //updateNote(activeNote.id,note).then(function() {
+    //getAndRenderNotes();
+    //});
+  }
+};
+
 // Sets the activeNote and displays it
 var handleNoteView =  async function() {
   title = $(this).data("title");
   $("li.list-group-item").removeClass("gray")
   $(this).addClass("gray")
   let data= await getNotes();
-  activeNote = (data.filter((note)=>{
-    if (note.title === title) return note
-  }))[0]
+  data.forEach((note,index) => {
+    if (note.title === title) {
+      activeNote.id = index;
+      activeNote.category = note.category;
+      activeNote.title = note.title;
+      activeNote.text = note.text;
+    }
+  });
+  // activeNote = (data.filter((note)=>{
+  //   if (note.title === title) return note
+  // }))[0]
   renderActiveNote();
 };
 
@@ -114,13 +153,14 @@ var handleCategoryView =  async function() {
 // Sets the activeNote to and empty object and allows the user to enter a new note
 var handleNewNoteView = function() {
   activeNote = {};
+  $saveNoteBtn.show();
   renderActiveNote();
 };
 
-// If a note's title or text are empty, hide the save button
+// If a note's title or text are empty, hide the save button  || activeNote.id!==undefined
 // Or else show it//--------------------
 var handleRenderSaveBtn = function() {
-  if (!$noteTitle.val().trim() || !$noteText.val().trim() || !$noteCategory.val().trim() ||activeNote.category!=undefined) {
+  if (!$noteTitle.val().trim() || !$noteText.val().trim() || !$noteCategory.val().trim() ) {
     $saveNoteBtn.hide();
   } else {
     $saveNoteBtn.show();
@@ -141,7 +181,10 @@ var renderNoteList = function(notes,category) {
       var $delBtn = $(
         "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
       )
-      $li.append($span, $delBtn);
+      var $edtBtn = $(
+        "<i class='fas fa-pen float-right text-success edit-note'>"
+      )
+      $li.append($span, $delBtn, $edtBtn);
       $noteList.append($li);
     }
   }
@@ -191,5 +234,6 @@ $noteTitle.on("keyup", handleRenderSaveBtn); //
 $noteText.on("keyup", handleRenderSaveBtn); //
 $noteCategory.on("keyup", handleRenderSaveBtn);  //
 $categoryList.on("click",".list-group-item", handleCategoryView);
+$noteList.on("click", ".edit-note", handleNoteEdit);
 // Gets and renders the initial list of notes
 getAndRenderNotes();
