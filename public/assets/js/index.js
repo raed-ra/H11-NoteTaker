@@ -8,6 +8,7 @@ var $categoryList = $(".list-container .categories");//
 
 // activeNote is used to keep track of the note in the textarea
 var activeNote = {};
+let editFlag = false
 
 
 // A function for getting all notes from the db
@@ -115,6 +116,8 @@ var handleNoteEdit = function(event) {
     $noteText.attr("readonly", false);
     $noteCategory.attr("readonly", false);
     $saveNoteBtn.show();
+    editFlag = true;
+    
     //updateNote(activeNote.id,note).then(function() {
     //getAndRenderNotes();
     //});
@@ -138,6 +141,7 @@ var handleNoteView =  async function() {
   // activeNote = (data.filter((note)=>{
   //   if (note.title === title) return note
   // }))[0]
+  editFlag = false;
   renderActiveNote();
 };
 
@@ -160,7 +164,7 @@ var handleNewNoteView = function() {
 // If a note's title or text are empty, hide the save button  || activeNote.id!==undefined
 // Or else show it//--------------------
 var handleRenderSaveBtn = function() {
-  if (!$noteTitle.val().trim() || !$noteText.val().trim() || !$noteCategory.val().trim() ) {
+  if (!$noteTitle.val().trim() || !$noteText.val().trim() || !$noteCategory.val().trim() || activeNote.id!==undefined && editFlag==false ) {
     $saveNoteBtn.hide();
   } else {
     $saveNoteBtn.show();
